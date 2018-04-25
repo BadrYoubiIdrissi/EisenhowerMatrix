@@ -1,0 +1,92 @@
+
+//===Définitions===
+// - de l'espace:
+mesh th = square(100,100);
+fespace Xh(th,P1);
+Xh u, v, uprec, effi, convFunc, f;
+
+// - des constantes
+
+real l1 = 0.0, l2 = 50.0, l3 = 500.0, l4 = 200.0, convec = 30.0;
+
+real t = 0, dt=0.0001, totalTime=0.2;
+
+// - de la fonction efficacité qui est une interpolation en 2D entre les 4 points l_i en (0,0), (0,1), (1,1), (1,0) : 
+
+effi = (l4-l1)*x+(l2-l1)*y+(l1+l3-l4-l2)*x*y+l1; 
+
+// - de la fonction convection (transport de u en urgence)
+
+convFunc = convec*(1+y)^2;
+
+// - de la gaussienne:
+
+macro gauss(meanx,meany,sigma) exp(-((x-meanx)^2+(y-meany)^2)/(2*sigma^2))// EOM
+
+// - de la graduation des isolignes
+
+real maxValue = 40.0, minValue = -0.1;
+int nbIso = 100;
+real[int] isolines(nbIso);
+
+isolines[0] = -0.1;
+for (int m=1; m<nbIso;m++)
+{
+    isolines[m] = isolines[m-1] + maxValue/nbIso;;
+}   
+
+// - du problème |  x = urgence, y = importance et f = source de travail
+
+problem dWork(u,v) = 
+    int2d(th)(u*v/dt + effi*u*v)
+    + int2d(th)( - uprec*v/dt - f*v);   
+
+    // le transport en urgence a été traité dans la boucle d'euler ci dessous
+    // pour des raisons de convergence
+
+//=== Fin des définitions
+
+//=== Génération des "taches" aléatoires :
+
+int nbTasks = 400;
+int seed = 30011998;
+cout << "Seed used for random generation : " << seed << endl;
+randinit(seed);
+real[int,int] tasks(nbTasks,5); //matrice contenant tout les nombres aléatoires
+for (int l; l<nbTasks;l++) 
+{
+    tasks(l,0) = 0.4*randreal1();          // position de la tache en urgence (x)
+    tasks(l,1) = randreal1();              // position de la tache en importance (y)
+    tasks(l,2) = 0.03+ 0.03*randreal1();   // écart type de la tache
+    tasks(l,3) = 0.5*(1 + randreal1());    // amplitude de la tache
+    tasks(l,4) = totalTime*randreal1();    // temps du commencement de la tache     
+}
+
+//=== Boucle principale de résolution
+
+uprec = 0;
+
+for (int m=0;m<=(totalTime/dt);m++)
+{
+    dWork;
+    th = adaptmesh(th, u);
+    plot(u, wait=false, value=true, dim=2, fill=1, viso=isolines, grey=1, boundary=0);
+    t = t+dt;
+
+    //== On ajoute toutes les taches généré alléatoirement
+
+    f = 0;
+    for (int j=0; j<nbTasks;j++)
+    {
+        if(tasks(j,4)<=t & t - tasks(j,4) <= 10*dt)
+        {
+            f = f + tasks(j,3)*gauss(tasks(j,0),tasks(j,1),tasks(j,2))/dt;
+        }
+    }
+
+    // on fait le transport en urgence 
+    u = convect([convFunc,0], -dt, u);
+
+    // on met à jour uprec pour le prochain tour de boucle
+    uprec=u;
+}
