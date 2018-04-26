@@ -7,7 +7,7 @@ Xh u, v, uprec, effi, convFunc, f;
 
 // - des constantes
 
-real l1 = 0.0, l2 = 50.0, l3 = 500.0, l4 = 200.0, convec = 30.0;
+real l1 = 100.0, l2 = 200.0, l3 = 50.0, l4 = 20.0, convec = 30.0;
 
 real t = 0, dt=0.0001, totalTime=0.2;
 
@@ -25,7 +25,7 @@ macro gauss(meanx,meany,sigma) exp(-((x-meanx)^2+(y-meany)^2)/(2*sigma^2))// EOM
 
 // - de la graduation des isolignes
 
-real maxValue = 40.0, minValue = -0.1;
+real maxValue = 30.0, minValue = -0.1;
 int nbIso = 100;
 real[int] isolines(nbIso);
 
@@ -70,7 +70,7 @@ for (int m=0;m<=(totalTime/dt);m++)
 {
     dWork;
     th = adaptmesh(th, u);
-    plot(u, wait=false, value=true, dim=2, fill=1, viso=isolines, grey=1, boundary=0);
+    plot(u, wait=false, value=true, dim=3, fill=1, viso=isolines, grey=1, boundary=0);
     t = t+dt;
 
     //== On ajoute toutes les taches généré alléatoirement
