@@ -8,10 +8,10 @@ Xh u, v, uprec, effi, convFunc, f;
 // - des constantes
 
 //High productivity
-//real l1 = 10.0, l2 = 200.0, l3 = 400.0, l4 = 20.0, convec = 30.0;
+real l1 = 10.0, l2 = 200.0, l3 = 400.0, l4 = 20.0, convec = 30.0;
 
 //Low productivity
-real l1 = 300.0, l2 = 100.0, l3 = 100.0, l4 = 30.0, convec = 30.0;
+//real l1 = 300.0, l2 = 100.0, l3 = 100.0, l4 = 30.0, convec = 30.0;
 
 real t = 0, dt=0.0001, totalTime=0.2;
 
@@ -70,9 +70,11 @@ for (int l; l<nbTasks;l++)
 
 //=== Boucle principale de résolution
 
-ofstream ff("LowProductivity.csv");
+ofstream ff("HighProductivity.csv");
 
 uprec = 0;
+
+real impWorknotdone = 0.0;
 
 for (int m=0;m<=(totalTime/dt);m++)
 {
@@ -83,7 +85,8 @@ for (int m=0;m<=(totalTime/dt);m++)
     plot(u, wait=false, dim=3, fill=1, viso=isolines, grey=1, boundary=0);
 
     //On écrit dans un fichier l'intégrale à la sortie du domaine au maximum d'urgence
-    ff << int1d(th, 2)(u) << endl;
+    impWorknotdone = impWorknotdone + int1d(th, 2)(y*u);
+    ff << int1d(th, 2)(y*u) << endl;
 
     //On affiche l'avancement
     if ((m % 10) == 0)
@@ -107,3 +110,5 @@ for (int m=0;m<=(totalTime/dt);m++)
     // on met à jour uprec pour le prochain tour de boucle
     uprec=u;
 }
+
+cout << "Total important work not done : "<< impWorknotdone << endl;

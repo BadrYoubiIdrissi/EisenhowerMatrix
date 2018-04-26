@@ -27,16 +27,14 @@
     flux de travail, il existe un outil d'organisation fort utile.
     La matrice d'Eisenhower est une grille à 4 cases qui classifie les tâches. Ce qui 
     aide à se fixer des priorités. Le but de ce modèle est d'étudier
-    l'évolution du travail restant en fonction du temps, de l'urgence et de l'importance d'une
-     tache.
+    l'évolution du travail restant en fonction du temps, de son urgence et de son importance.
     
-    Pour pouvoir utiliser des EDP je me place dans un cadre continu : l'espace $\Omega$ est
-     l'espace (urgence, importance). Une tache est représenté par 
-    une gaussienne de moyenne $(\mu_x,\mu_y)$ avec $\mu_x$ l'urgence de la tache et
-     $\mu_y$ son importance.
-    Ceci peut être justifié en pensant une tache comme plusieurs sous-taches
+    Pour pouvoir utiliser des EDP je me place dans un cadre continu : $\Omega$ est
+     l'espace (urgence, importance). Une tâche est représenté par 
+    une gaussienne de moyenne $(\mu_x,\mu_y)$.
+    Ceci peut être justifié en décrivant un travail donné comme plusieurs composantes
      d'importance et d'urgence variant
-    autour de la moyenne. L'écart type $\sigma$ de la tâche représente l'étalement de la tâche.
+    autour de la moyenne. L'écart type $\sigma$ de représente l'étalement de cette décomposition.
 
     \subsection{\'Equation}
     Soit $\Omega = [0,1]^2$,
@@ -49,14 +47,14 @@
         \lambda \;:\; &\text{\;Vitesse de l'augmentation en urgence}\\
         \nu \;:\; &
         \text{\;Efficacité} = \frac{1}{\tau(x,y)} \text{ avec } \tau(x,y) 
-        \text{ le temps caractéristique de complétion d'une tache en} \,(x,y)
+        \text{ le temps caractéristique de complétion d'une tâche en} \,(x,y)
     \end{alignat*}
 
     \subsection{Explications et précisions}
     On réecrit l'équation ansi : $\frac{\partial u}{\partial t} = \rho - \nu.u - \lambda\frac{\partial u}{\partial x}$. 
     Le terme $\rho$ est la source de travail (Ex: "Mini" projet d'EDP). Puis $ - \lambda\frac{\partial u}{\partial x}$ 
-    correspond au transport des taches en urgence : le plus le temps passe le plus chaque tâche devient plus urgente 
-    (cf. Date de rédaction ci-dessus). Ensuite $\nu.u$ est le travail fourni par un centralien aléatoire. Pour une tache en $(x,y)$, le travail fourni 
+    correspond au transport en urgence : le plus le temps passe le plus chaque tâche devient plus urgente 
+    (cf. Date de rédaction ci-dessus). Ensuite $\nu.u$ est le travail fourni par un centralien aléatoire. Pour $(x,y)$ fixé, le travail fourni 
     est logiquement proportionnel au travail restant. Il reste à determiner la dépendance en urgence et en importance 
     de l'éfficacité du centralien. Dans ce modèle on pose :
     \begin{align}
@@ -72,8 +70,8 @@
         \vspace{-40pt}
     \end{wrapfigure}
 
-    Avec $C > 0$ une constante de "convection". La fonction $\lambda$ reflète le fait 
-    que les taches importantes sont de manière générale deviennent plus urgentes que celles qui le sont moins.
+        Avec $C > 0$ une constante de "convection". La fonction $\lambda$ reflète le fait 
+        que les taches importantes sont de manière générale deviennent plus urgentes que celles qui le sont moins.
     Et $L_i > 0$ les valeurs de l'efficacité en $\{(0,0),(1,0),(1,1),(1,0)\}$. la fonction 
     $\nu$ ne fait qu'interpoler continuement entre ces valeurs. Les valeurs $L_i$ 
     caractérisent la personne qui accomplit les taches. Par exemple un grand $L_1$ 
@@ -95,8 +93,10 @@
         \forall v \in \mathcal{D}(\Omega) \; \frac{1}{\delta t} \int_{\Omega} u^{(m)}v - u^{(m-1)}v + \int_{\Omega} \nu.u^{(m)}v
         &= \int_{\Omega} \rho v
     \end{alignat*}
-    On calcul donc itérativement $u$. Pour prendre en compte le terme cocnvectif, dans cette même boucle de résolution, on applique la fonction convect de freefem 
+    On calcul donc itérativement $u$. Pour prendre en compte le terme convectif, dans cette même boucle de résolution, on applique la fonction convect de freefem 
     \subsection{Résultats et Analyse}
+    Total travail important non fait (Low Produc) 3607.78
+    Total travail important non fait (High Produc)2058.24
     \subsection{Conclusion}
     
 \end{document}

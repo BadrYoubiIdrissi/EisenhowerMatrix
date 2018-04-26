@@ -1,0 +1,6 @@
+*.ppm
+*.aux
+*.fdb_latexmk
+*.fls
+*.gz
+*.log
