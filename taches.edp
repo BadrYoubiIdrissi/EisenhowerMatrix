@@ -7,7 +7,11 @@ Xh u, v, uprec, effi, convFunc, f;
 
 // - des constantes
 
-real l1 = 100.0, l2 = 200.0, l3 = 50.0, l4 = 20.0, convec = 30.0;
+//High productivity
+//real l1 = 10.0, l2 = 200.0, l3 = 400.0, l4 = 20.0, convec = 30.0;
+
+//Low productivity
+real l1 = 300.0, l2 = 100.0, l3 = 100.0, l4 = 30.0, convec = 30.0;
 
 real t = 0, dt=0.0001, totalTime=0.2;
 
@@ -25,7 +29,7 @@ macro gauss(meanx,meany,sigma) exp(-((x-meanx)^2+(y-meany)^2)/(2*sigma^2))// EOM
 
 // - de la graduation des isolignes
 
-real maxValue = 30.0, minValue = -0.1;
+real maxValue = 35.0, minValue = -0.1;
 int nbIso = 100;
 real[int] isolines(nbIso);
 
@@ -48,21 +52,25 @@ problem dWork(u,v) =
 
 //=== Génération des "taches" aléatoires :
 
+
 int nbTasks = 400;
 int seed = 30011998;
+
 cout << "Seed used for random generation : " << seed << endl;
 randinit(seed);
-real[int,int] tasks(nbTasks,5); //matrice contenant tout les nombres aléatoires
+real[int,int] tasks(nbTasks,5); //Matrice contenant tout les nombres aléatoires
 for (int l; l<nbTasks;l++) 
 {
     tasks(l,0) = 0.4*randreal1();          // position de la tache en urgence (x)
     tasks(l,1) = randreal1();              // position de la tache en importance (y)
-    tasks(l,2) = 0.03+ 0.03*randreal1();   // écart type de la tache
-    tasks(l,3) = 0.5*(1 + randreal1());    // amplitude de la tache
+    tasks(l,2) = 0.03+ 0.05*randreal1();   // écart type de la tache
+    tasks(l,3) = (1 + randreal1());    // amplitude de la tache
     tasks(l,4) = totalTime*randreal1();    // temps du commencement de la tache     
 }
 
 //=== Boucle principale de résolution
+
+ofstream ff("LowProductivity.csv");
 
 uprec = 0;
 
@@ -70,9 +78,18 @@ for (int m=0;m<=(totalTime/dt);m++)
 {
     dWork;
     th = adaptmesh(th, u);
-    plot(u, wait=false, value=true, dim=3, fill=1, viso=isolines, grey=1, boundary=0);
     t = t+dt;
 
+    plot(u, wait=false, dim=3, fill=1, viso=isolines, grey=1, boundary=0);
+
+    //On écrit dans un fichier l'intégrale à la sortie du domaine au maximum d'urgence
+    ff << int1d(th, 2)(u) << endl;
+
+    //On affiche l'avancement
+    if ((m % 10) == 0)
+    {
+        cout << t/totalTime*100 << "%" << endl;
+    }
     //== On ajoute toutes les taches généré alléatoirement
 
     f = 0;
