@@ -93,10 +93,42 @@
         \forall v \in \mathcal{D}(\Omega) \; \frac{1}{\delta t} \int_{\Omega} u^{(m)}v - u^{(m-1)}v + \int_{\Omega} \nu.u^{(m)}v
         &= \int_{\Omega} \rho v
     \end{alignat*}
-    On calcul donc itérativement $u$. Pour prendre en compte le terme convectif, dans cette même boucle de résolution, on applique la fonction convect de freefem 
+    On calcul donc itérativement $u$. Pour prendre en compte le terme convectif, dans cette même boucle de résolution, on applique la fonction convect de freefem.
+    
+    La source de travail est modélisé par la variable aléatoire suivante 
+    \begin{equation}
+        \rho_t = Aexp\left( \frac{(x-\mu_x)^2+(y-\mu_y)^2}{2\sigma^2} \right)1_{[t, t+10\delta t]}
+    \end{equation} 
+    avec $\rho = \sum_{i\in I} \rho_{t_i}$ ($\rho$ est la source totale) et $\mu_x,\mu_y,\sigma,t,A$ des variables aléatoires suivant des lois uniformes
     \subsection{Résultats et Analyse}
-    Total travail important non fait (Low Produc) 3607.78
-    Total travail important non fait (High Produc)2058.24
+    On lance la simulation (Lancer tachesCloporte.edp et tachesPolard.edp) pour deux archétypes centraliens différents : Une personne productive (qu'on notera \textbf{Polard}) et une personne peu productive (qu'on notera \textbf{Cloporte}).
+    \begin{itemize}
+        \item{Polard : $L_1 = 10, L_2 = 200, L_3 = 400, L_4 = 20$}
+        \begin{center}
+            \includegraphics[width = 0.9\textwidth]{Figures/Evolution/HighProductivity/Stitched.png}
+        \end{center}
+        \item{Cloporte : $L_1 = 300, L_2 = 100, L_3 = 100, L_4 = 30$} 
+        \begin{center}
+            \includegraphics[width = 0.9\textwidth]{Figures/Evolution/LowProductivity/Stitched.png}
+        \end{center}
+    \end{itemize}
+
+    \begin{wrapfigure}{r}{0.30\textwidth}
+        \begin{center}
+            \includegraphics[width=0.30\textwidth]{Figures/TravailImpNonFaitDrole.png}
+        \end{center}
+        \vspace{-60pt}
+    \end{wrapfigure}
+
+    Le polard arrive à garder le travail à faire important à un bas niveau alors que le cloporte a du mal à faire de même.
+    
+    Voici un graph du flux de travail important non fait (On consifère que si l'urgence dépasse 1 le travail est non fait)
+    qu'on calcule de la manière suivante $\int_{[0,1]}y.u(1,y,t)dy$
+    \begin{itemize}
+        \item{Total travail important non fait (Polard) 2058.24}
+        \item{Total travail important non fait (Cloporte) 3607.78}
+    \end{itemize}
     \subsection{Conclusion}
+        Ce modèle très simple illustre l'importance de la planification en amont et de la priorisation des tâches même face à une source de travail aléatoire. 
     
 \end{document}
