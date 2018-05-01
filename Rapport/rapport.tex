@@ -23,18 +23,18 @@
             \includegraphics[width=0.23\textwidth]{Figures/Eisenhower.png}
         \end{center}
     \end{wrapfigure}
-    La vie à Centrale peut être très chargée! pour s'armer contre l'interminable 
+    La vie à Centrale peut être très chargée! Pour s'armer contre l'interminable 
     flux de travail, il existe un outil d'organisation fort utile.
     La matrice d'Eisenhower est une grille à 4 cases qui classifie les tâches. Ce qui 
     aide à se fixer des priorités. Le but de ce modèle est d'étudier
     l'évolution du travail restant en fonction du temps, de son urgence et de son importance.
     
     Pour pouvoir utiliser des EDP je me place dans un cadre continu : $\Omega$ est
-     l'espace (urgence, importance). Une tâche est représenté par 
+     l'espace $(urgence, importance)$. Une tâche est représentée par 
     une gaussienne de moyenne $(\mu_x,\mu_y)$.
     Ceci peut être justifié en décrivant un travail donné comme plusieurs composantes
      d'importance et d'urgence variant
-    autour de la moyenne. L'écart type $\sigma$ de représente l'étalement de cette décomposition.
+    autour de la moyenne. L'écart type $\sigma$ représente l'étalement de cette décomposition.
 
     \subsection{\'Equation}
     Soit $\Omega = [0,1]^2$,
@@ -53,9 +53,9 @@
     \subsection{Explications et précisions}
     On réecrit l'équation ansi : $\frac{\partial u}{\partial t} = \rho - \nu.u - \lambda\frac{\partial u}{\partial x}$. 
     Le terme $\rho$ est la source de travail (Ex: "Mini" projet d'EDP). Puis $ - \lambda\frac{\partial u}{\partial x}$ 
-    correspond au transport en urgence : le plus le temps passe le plus chaque tâche devient plus urgente 
-    (cf. Date de rédaction ci-dessus). Ensuite $\nu.u$ est le travail fourni par un centralien aléatoire. Pour $(x,y)$ fixé, le travail fourni 
-    est logiquement proportionnel au travail restant. Il reste à determiner la dépendance en urgence et en importance 
+    correspond au transport en urgence : plus le temps passe plus chaque tâche devient urgente 
+    (cf. Date de rédaction ci-dessus). Ensuite $\nu.u$ est le travail fourni par un centralien quelconque. Pour $(x,y)$ fixé, le travail fourni 
+    est intuitivement proportionnel au travail restant. Il reste à determiner la dépendance en urgence et en importance 
     de l'éfficacité du centralien. Dans ce modèle on pose :
     \begin{align}
         \forall(x,y)\in\Omega, \; \lambda(x,y) &= C(1+y)^2 \\
@@ -71,21 +71,22 @@
     \end{wrapfigure}
 
         Avec $C > 0$ une constante de "convection". La fonction $\lambda$ reflète le fait 
-        que les taches importantes sont de manière générale deviennent plus urgentes que celles qui le sont moins.
+        que les taches importantes deviennent plus urgentes que celles qui le sont moins.
     Et $L_i > 0$ les valeurs de l'efficacité en $\{(0,0),(1,0),(1,1),(1,0)\}$. la fonction 
     $\nu$ ne fait qu'interpoler continuement entre ces valeurs. Les valeurs $L_i$ 
-    caractérisent la personne qui accomplit les taches. Par exemple un grand $L_1$ 
+    caractérisent la personne qui accomplit les tâches. Par exemple un grand $L_1$ 
     relativement aux autres signifie que  la personne a une tendance à effectuer des 
     taches non urgentes et non importantes. (Procrastination!)
     
     
     \section{Simulation}
     \subsection{Formulation variationnelle et résolution numérique}
-    L'équation ci dessus est hyperbolique si l'on prends en compte que les dimensions "spatiales".
-    Ceci fait que la résolution théorique introduit dans le cours n'est plus la même. J'ai essayé d'appliquer la méthode
+    L'équation ci-dessus est hyperbolique si l'on ne prend en compte que les dimensions "spatiales".
+    Ceci fait que la résolution théorique introduite dans le cours n'est plus la même. J'ai essayé d'appliquer la méthode
     variationnelle directement mais sans succès (La résolution numérique finissait toujours par diverger). J'ai donc enlevé le terme problèmatique
     de 'convection' et je l'applique dans la boucle de résolution plutot que dans la formulation variationnelle. On fait en plus de ceci l'approximation 
-    $\frac{\partial u^{(m)}}{\partial t} \approx \frac{u^{(m)} - u^{(m-1)}}{\delta t}$ On a donc l'équation
+    $\frac{\partial u^{(m)}}{\partial t} \approx \frac{u^{(m)} - u^{(m-1)}}{\delta t}$.
+    On a donc l'équation
     \begin{alignat*}{10}
         \frac{u^{(m)} - u^{(m-1)}}{\delta t} + 
         \textcolor{Red}{\left( \lambda\frac{\partial u}{\partial x}\right)} 
@@ -93,15 +94,15 @@
         \forall v \in \mathcal{D}(\Omega) \; \frac{1}{\delta t} \int_{\Omega} u^{(m)}v - u^{(m-1)}v + \int_{\Omega} \nu.u^{(m)}v
         &= \int_{\Omega} \rho v
     \end{alignat*}
-    On calcul donc itérativement $u$. Pour prendre en compte le terme convectif, dans cette même boucle de résolution, on applique la fonction convect de freefem.
+    On calcule donc itérativement $u$. Pour prendre en compte le terme convectif, dans cette même boucle de résolution, on applique la fonction convect de freefem. (voir code)
     
-    La source de travail est modélisé par la variable aléatoire suivante 
+    La source de travail est modélisée par la variable aléatoire suivante 
     \begin{equation}
         \rho_t = Aexp\left( \frac{(x-\mu_x)^2+(y-\mu_y)^2}{2\sigma^2} \right)1_{[t, t+10\delta t]}
     \end{equation} 
-    avec $\rho = \sum_{i\in I} \rho_{t_i}$ ($\rho$ est la source totale) et $\mu_x,\mu_y,\sigma,t,A$ des variables aléatoires suivant des lois uniformes
+    avec $\rho = \sum_{i\in I} \rho_{t_i}$ ($\rho$ est la source totale) et $\mu_x,\mu_y,\sigma,t,A$ des variables aléatoires suivant des lois uniformes.
     \subsection{Résultats et Analyse}
-    On lance la simulation (Lancer tachesCloporte.edp et tachesPolard.edp) pour deux archétypes centraliens différents : Une personne productive (qu'on notera \textbf{Polard}) et une personne peu productive (qu'on notera \textbf{Cloporte}).
+    On lance la simulation  pour deux archétypes centraliens différents : Une personne productive (qu'on notera \textbf{Polard}) et une personne peu productive (qu'on notera \textbf{Cloporte}). (Lancer \textit{tachesCloporte.edp} et \textit{tachesPolard.edp})
     \begin{itemize}
         \item{Polard : $L_1 = 10, L_2 = 200, L_3 = 400, L_4 = 20$}
         \begin{center}
@@ -120,15 +121,16 @@
         \vspace{-60pt}
     \end{wrapfigure}
 
-    Le polard arrive à garder le travail à faire important à un bas niveau alors que le cloporte a du mal à faire de même.
+    Le polard arrive à garder le travail important à faire en quantité faible, alors que le cloporte a du mal à faire de même.
     
-    Voici un graph du flux de travail important non fait (On consifère que si l'urgence dépasse 1 le travail est non fait)
+    Voici un graphe du flux de travail important non fait en fonction du temps (On considère que si l'urgence dépasse 1 le travail est non fait)
     qu'on calcule de la manière suivante $\int_{[0,1]}y.u(1,y,t)dy$
     \begin{itemize}
-        \item{Total travail important non fait (Polard) 2058.24}
-        \item{Total travail important non fait (Cloporte) 3607.78}
+        \item{Travail total important non fait (Polard) 2058.24}
+        \item{Travail total important non fait (Cloporte) 3607.78}
     \end{itemize}
     \subsection{Conclusion}
-        Ce modèle très simple illustre l'importance de la planification en amont et de la priorisation des tâches même face à une source de travail aléatoire. 
+        Ce modèle très simple illustre l'importance de la planification en amont et de la priorisation des tâches 
+        même face à une source de travail aléatoire. 
     
 \end{document}
